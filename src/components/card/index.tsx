@@ -14,8 +14,8 @@ import {
 import {
   useDeletePostMutation,
   useLazyGetAllpostsQuery,
+  useLazyGetPostByIdQuery,
 } from "../../app/services/postsApi"
-import { useLazyGetUserByIdQuery } from "../../app/services/userApi"
 import { useDeleteCommentMutation } from "../../app/services/commentApi"
 import { Link, useNavigate } from "react-router-dom"
 import { useSelector } from "react-redux"
@@ -61,7 +61,7 @@ export const Card: React.FC<Props> = ({
   const [likePost] = useLikePostMutation()
   const [unlikePost] = useUnlikePostMutation()
   const [triggerAllPosts] = useLazyGetAllpostsQuery()
-  const [triggerGetPostById] = useLazyGetUserByIdQuery()
+  const [triggerGetPostById] = useLazyGetPostByIdQuery()
   const [deletePost, deletePostStatus] = useDeletePostMutation()
   const [deleteComment, deleteCommentStatus] = useDeleteCommentMutation()
   const [error, setError] = useState("")
@@ -74,7 +74,7 @@ export const Card: React.FC<Props> = ({
         await triggerAllPosts().unwrap()
         break
       case "current-post":
-        await triggerAllPosts().unwrap()
+        await triggerGetPostById(id).unwrap()
         break
       case "comment":
         await triggerGetPostById(id).unwrap()
@@ -96,7 +96,7 @@ export const Card: React.FC<Props> = ({
           navigate("/")
           break
         case "comment":
-          await deleteComment(id).unwrap()
+          await deleteComment(commentId).unwrap()
           await refetchPosts()
           break
         default:
